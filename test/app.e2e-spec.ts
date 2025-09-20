@@ -1,8 +1,9 @@
-import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/database/prisma.service';
+import { createAppWithDefaults } from './utils/app';
 
 describe('App (e2e)', () => {
   let app: INestApplication;
@@ -13,12 +14,7 @@ describe('App (e2e)', () => {
       .useValue({ $queryRawUnsafe: jest.fn().mockResolvedValue(1) })
       .compile();
 
-    app = moduleRef.createNestApplication();
-    app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
-    app.useGlobalPipes(
-      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
-    );
-    await app.init();
+    app = await createAppWithDefaults(moduleRef);
   });
 
   afterAll(async () => {
