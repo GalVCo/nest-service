@@ -10,8 +10,14 @@ export class BooksService {
   async create(dto: CreateBookDto) {
     try {
       return await this.prisma.book.create({ data: dto });
-    } catch (e: any) {
-      if (e?.code === 'P2002') throw new ConflictException('Book with this ISBN already exists');
+    } catch (e: unknown) {
+      if (
+        typeof e === 'object' &&
+        e !== null &&
+        'code' in e &&
+        (e as { code?: string }).code === 'P2002'
+      )
+        throw new ConflictException('Book with this ISBN already exists');
       throw e;
     }
   }
@@ -37,4 +43,3 @@ export class BooksService {
     return { deleted: true };
   }
 }
-

@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe, VERSION_NEUTRAL, VersioningType } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
@@ -31,4 +31,3 @@ describe('App (e2e)', () => {
     expect(res.body).toHaveProperty('status', 'ok');
   });
 });
-

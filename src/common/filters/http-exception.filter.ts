@@ -5,18 +5,23 @@ import { HttpAdapterHost } from '@nestjs/core';
 export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly adapterHost: HttpAdapterHost) {}
 
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const { httpAdapter } = this.adapterHost;
     const ctx = host.switchToHttp();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let body: any = { message: 'Internal Server Error' };
+    let body: Record<string, unknown> = { message: 'Internal Server Error' };
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const resp = exception.getResponse();
-      body = typeof resp === 'string' ? { message: resp } : resp;
-    } else if (exception?.code === 'P2002') {
+      body = typeof resp === 'string' ? { message: resp } : (resp as Record<string, unknown>);
+    } else if (
+      typeof exception === 'object' &&
+      exception !== null &&
+      'code' in exception &&
+      (exception as { code?: string }).code === 'P2002'
+    ) {
       status = HttpStatus.CONFLICT;
       body = { message: 'Resource already exists' };
     }
@@ -24,4 +29,3 @@ export class AllExceptionsFilter implements ExceptionFilter {
     httpAdapter.reply(ctx.getResponse(), body, status);
   }
 }
-

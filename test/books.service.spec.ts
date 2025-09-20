@@ -27,7 +27,7 @@ describe('BooksService', () => {
     }).compile();
 
     service = module.get(BooksService);
-    prisma = module.get(PrismaService) as any;
+    prisma = module.get(PrismaService) as unknown as jest.Mocked<PrismaService>;
   });
 
   it('creates a book', async () => {
@@ -44,8 +44,7 @@ describe('BooksService', () => {
   });
 
   it('findOne throws when missing', async () => {
-    prisma.book.findUnique.mockResolvedValue(null as any);
+    prisma.book.findUnique.mockResolvedValue(null);
     await expect(service.findOne('x')).rejects.toBeInstanceOf(NotFoundException);
   });
 });
-
