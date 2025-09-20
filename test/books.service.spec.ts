@@ -3,9 +3,19 @@ import { BooksService } from '../src/books/books.service';
 import { PrismaService } from '../src/database/prisma.service';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 
+type PrismaMock = {
+  book: {
+    create: jest.Mock;
+    findUnique: jest.Mock;
+    findMany: jest.Mock;
+    update: jest.Mock;
+    delete: jest.Mock;
+  };
+};
+
 describe('BooksService', () => {
   let service: BooksService;
-  let prisma: jest.Mocked<PrismaService>;
+  let prisma: PrismaMock;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -27,7 +37,7 @@ describe('BooksService', () => {
     }).compile();
 
     service = module.get(BooksService);
-    prisma = module.get(PrismaService) as unknown as jest.Mocked<PrismaService>;
+    prisma = module.get(PrismaService) as unknown as PrismaMock;
   });
 
   it('creates a book', async () => {
