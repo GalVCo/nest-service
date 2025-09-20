@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -25,16 +25,16 @@ jobs:
 
       - name: Generate Prisma Client
         run: npm run prisma:generate
-        working-directory: books-service
+        working-directory: nest-service
 
       - name: Lint
         run: npm run lint
-        working-directory: books-service
+        working-directory: nest-service
 
       - name: Build
         run: npm run build
-        working-directory: books-service
+        working-directory: nest-service
 
       - name: Test
         run: npm test -- --runInBand
-        working-directory: books-service
+        working-directory: nest-service
